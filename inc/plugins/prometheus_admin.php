@@ -14,7 +14,7 @@ if (!defined('IN_MYBB') || !defined('IN_ADMINCP')) {
     die('Direct initialization of this file is not allowed.');
 }
 
-$page->add_breadcrumb_item('Prometheus Metrics');
+
 
 // Load current settings from environment or fallback
 $metrics_path = $_ENV['PROMETHEUS_METRICS_PATH'] ?? 'prometheus_metrics';
@@ -33,7 +33,7 @@ if ($mybb->request_method === 'post') {
         $config_php .= "putenv(\"$key=" . addslashes($value) . "\");\n";
     }
     file_put_contents($config_file, $config_php);
-    flash_message('Prometheus plugin settings updated. Please reload your web server if using PHP-FPM.', 'success');
+    flash_message($lang->prometheus_settings_updated, 'success');
     admin_redirect('index.php?module=config-plugins&action=prometheus');
 }
 
@@ -47,28 +47,28 @@ if (file_exists($log_file)) {
 
 $form = new Form('index.php?module=config-plugins&action=prometheus', 'post');
 
-$page->output_header('Prometheus Metrics Configuration');
+$page->output_header($lang->prometheus_metrics_configuration);
 
 $table = new Table;
-$table->construct_header('Setting', ['width' => '30%']);
-$table->construct_header('Value');
+$table->construct_header($lang->prometheus_setting_header, ['width' => '30%']);
+$table->construct_header($lang->prometheus_value_header);
 $table->construct_row([
-    'Metrics Path',
+    $lang->prometheus_metrics_path,
     $form->generate_text_box('metrics_path', $metrics_path, ['style' => 'width: 300px;'])
 ]);
 $table->construct_row([
-    'IP Allowlist',
+    $lang->prometheus_ip_allowlist,
     $form->generate_text_box('allowlist', $allowlist, ['style' => 'width: 300px;'])
 ]);
 
-$table->output('Prometheus Metrics Plugin Settings');
+$table->output($lang->prometheus_plugin_settings);
 
-$form->output_submit_wrapper(['Update Settings']);
+$form->output_submit_wrapper([$lang->prometheus_update_settings]);
 $form->end();
 
 // Audit log display
 if ($audit_log) {
-    echo '<h3>Recent Metrics Endpoint Access Log</h3>';
+    echo '<h3>' . $lang->prometheus_audit_log_title . '</h3>';
     echo '<div style="max-height:200px;overflow:auto;border:1px solid #ccc;padding:8px;font-family:monospace;font-size:12px;">' . $audit_log . '</div>';
 }
 
