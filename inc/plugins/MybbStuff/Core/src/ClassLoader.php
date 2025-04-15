@@ -5,20 +5,11 @@ namespace MybbStuff\Core;
 
 final class ClassLoader
 {
-    /**
-     * @var self
-     */
-    private static $instance;
+    private static ?self $instance = null;
+    private array $nameSpacePrefixes = [];
 
-    /**
-     * @var array
-     */
-    private $nameSpacePrefixes;
+    private function __construct() {}
 
-    private function __construct()
-    {
-        $this->nameSpacePrefixes = [];
-    }
 
     public static function getInstance(): self
     {

@@ -1,4 +1,9 @@
 <?php
+/**
+ * BSD 3-Clause License
+ * Copyright (c) Euan Torano and contributors. All rights reserved.
+ * See LICENSE file in the root directory.
+ */
 declare(strict_types=1);
 
 namespace MybbStuff\Prometheus;
@@ -9,14 +14,17 @@ use Countable;
 class MetricReporterRegistry implements ArrayAccess, Countable
 {
     /**
-     * @var \MybbStuff\Prometheus\MetricReporterRegistry
+     * @var self|null
      */
-    private static $instance;
+    private static ?self $instance = null;
 
     /**
-     * @var array
+     * @var array<string, IMetricReporter>
      */
-    private $metricReporters;
+    private array $metricReporters;
+
+{
+    // Modernized: removed legacy property declarations. Typed properties are declared above for PHP 8.3+.
 
     private function __construct()
     {

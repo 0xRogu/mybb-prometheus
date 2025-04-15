@@ -11,27 +11,21 @@ use MybbStuff\Prometheus\Metric;
 
 class OnlineUsersMetricReporter implements IMetricReporter
 {
-	/**
-	 * @var \MyBB
-	 */
-	protected $mybb;
+    protected MyBB $mybb;
+    protected DB_Base $db;
+    protected datacache $cache;
 
-	/**
-	 * @var \DB_Base
-	 */
-	protected $db;
-
-	/**
-	 * @var \datacache
-	 */
-	protected $cache;
-
-	public function __construct(MyBB $mybb, DB_Base $db, datacache $cache)
-	{
-		$this->mybb = $mybb;
-		$this->db = $db;
-		$this->cache = $cache;
-	}
+    /**
+     * @param MyBB $mybb
+     * @param DB_Base $db
+     * @param datacache $cache
+     */
+    public function __construct(MyBB $mybb, DB_Base $db, datacache $cache)
+    {
+        $this->mybb = $mybb;
+        $this->db = $db;
+        $this->cache = $cache;
+    }
 
 	/**
 	 * Get the name of the metric reporter.

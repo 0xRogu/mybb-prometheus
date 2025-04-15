@@ -1,4 +1,9 @@
 <?php
+/**
+ * BSD 3-Clause License
+ * Copyright (c) Euan Torano and contributors. All rights reserved.
+ * See LICENSE file in the root directory.
+ */
 declare(strict_types=1);
 
 namespace MybbStuff\Prometheus\MetricReporters;
@@ -9,6 +14,68 @@ use MyBB;
 use MybbStuff\Prometheus\Metric;
 
 class BoardStatsMetricReporter extends CacheBasedMetricReporter
+{
+    /**
+     * Get the name of the metric reporter.
+     */
+    public function getName(): string
+    {
+        return 'board_stats';
+    }
+
+    /**
+     * Get all of the metrics for this reporter.
+     *
+     * @return array<string, \MybbStuff\Prometheus\Metric>
+     */
+    public function getMetrics(): array
+    {
+        $metrics = [];
+
+        $statsCache = $this->readCache($this->cache, 'stats');
+
+        foreach (static::$gaugeStats as $key => $stat) {
+            if (isset($statsCache[$key])) {
+                $metrics[$stat['name']] = (new Metric($stat['name'], Metric::TYPE_GAUGE))
+                    ->setHelp($stat['help'])
+                    ->setValue((int) $statsCache[$key]);
+            }
+        }
+
+        $calculatedStats = [];
+
+        if (isset($statsCache['numposts']) && isset($statsCache['numthreads'])) {
+            $calculatedStats['replies_per_thread'] = round(
+                ($statsCache['numposts'] - $statsCache['numthreads']) / max($statsCache['numthreads'], 1),
+                2
+            );
+        }
+        if (isset($statsCache['numthreads']) && isset($statsCache['numusers'])) {
+            $calculatedStats['threads_per_day'] = round(
+                $statsCache['numthreads'] / max($statsCache['numusers'], 1),
+                2
+            );
+        }
+        if (isset($statsCache['numusers'])) {
+            $calculatedStats['members_per_day'] = round(
+                $statsCache['numusers'] / max($statsCache['numusers'], 1),
+                2
+            );
+        }
+
+        foreach (static::$calculatedStats as $key => $stat) {
+            if (isset($calculatedStats[$key])) {
+                $metrics[$stat['name']] = (new Metric($stat['name'], Metric::TYPE_GAUGE))
+                    ->setHelp($stat['help'])
+                    ->setValue((int) $calculatedStats[$key]);
+            }
+        }
+
+        $this->getStatisticsMetrics($metrics, $statsCache);
+
+        return $metrics;
+    }
+
 {
     private static $gaugeStats = [
         'numthreads' => [

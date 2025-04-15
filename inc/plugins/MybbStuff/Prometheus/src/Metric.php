@@ -1,4 +1,9 @@
 <?php
+/**
+ * BSD 3-Clause License
+ * Copyright (c) Euan Torano and contributors. All rights reserved.
+ * See LICENSE file in the root directory.
+ */
 declare(strict_types=1);
 
 namespace MybbStuff\Prometheus;
@@ -6,6 +11,9 @@ namespace MybbStuff\Prometheus;
 use InvalidArgumentException;
 
 final class Metric
+{
+    // Add type hints and docblocks as appropriate for PHP 8.3+
+
 {
     public const TYPE_COUNTER = 'counter';
 
@@ -28,27 +36,11 @@ final class Metric
     /**
      * @var string
      */
-    private $name;
-
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var string|null
-     */
-    private $help;
-
-    /**
-     * @var mixed
-     */
-    private $value;
-
-    /**
-     * @var int|null
-     */
-    private $timeStamp;
+    private string $name;
+    private string $type;
+    private ?string $help = null;
+    private mixed $value = null;
+    private ?int $timeStamp = null;
 
     /**
      * Create a new metric.
